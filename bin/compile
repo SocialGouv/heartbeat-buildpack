@@ -1,0 +1,23 @@
+#!/bin/bash
+
+BUILD_DIR=$1
+
+indent() {
+  sed 's/^/       /'
+}
+
+HEARTBEAT_VERSION=${HEARTBEAT_VERSION:-7.16.1}
+
+BUILDPACK_PATH=$(dirname $(readlink -f $0))/../
+
+echo "Downloading Heartbeat version $HEARTBEAT_VERSION" | indent
+curl https://artifacts.elastic.co/downloads/beats/heartbeat/heartbeat-$HEARTBEAT_VERSION-linux-x86_64.tar.gz -L --silent -o /tmp/heartbeat.tar.gz
+
+echo "Extracting Heartbeat" | indent
+mkdir -p $BUILD_DIR/heartbeat
+tar -xf /tmp/heartbeat.tar.gz -C $BUILD_DIR/heartbeat
+
+mkdir -p $BUILD_DIR/bin
+cp $BUILDPACK_PATH/bin/heartbeat $BUILD_DIR/bin/heartbeat
+
+echo "Done" | indent
